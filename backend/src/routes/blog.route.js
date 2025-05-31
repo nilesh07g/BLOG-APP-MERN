@@ -2,12 +2,14 @@ const express = require('express');
 const Blog = require('../model/blog.model');
 const router = express.Router();
 const Comment = require('../model/comment.model');
+const verifyToken = require('../middleware/VerifyToken');
+const isAdmin = require('../middleware/isAdmin');
 
 //create blog
-router.post('/create-post',async (req, res) => {
+router.post('/create-post',verifyToken,isAdmin, async (req, res) => {
   try {
 
-      const newPost = new Blog({...req.body });
+      const newPost = new Blog({...req.body,author:req.userId}); 
       await newPost.save();
       res.status(201).send({ message: 'Post created successfully', post: newPost });
   } catch (error) {
@@ -72,7 +74,7 @@ router.get('/:id',async (req, res) => {
 });
 
 //update post
-router.patch('/update-post/:id', async (req, res) => {
+router.patch('/update-post/:id',verifyToken, async (req, res) => {
     try {
         const postId = req.params.id;
         const updatedPost = await Blog.findByIdAndUpdate(postId, {
@@ -97,7 +99,7 @@ router.patch('/update-post/:id', async (req, res) => {
 })
 
 //delete a blog
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken,async (req, res) => {
     try {
         const postId = req.params.id;
         const post = await Blog.findByIdAndDelete(postId);
@@ -120,7 +122,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 //related blogs
-router.get('/related/:category', async (req, res) => {
+router.get('/related/:category',async (req, res) => {
     try {
         const {id} = req.params;
         if(!id){
