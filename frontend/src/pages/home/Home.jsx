@@ -1,9 +1,14 @@
 import React from 'react'
+import Hero from './Hero'
+import Blogs from '../blogs/Blogs'
 
 const Home = () => {
   return (
-    <div>
-      home page
+    <div className='bg-white text-primary container mx-auto mt-8 p-8'>
+      
+      <Hero/>
+      <hr/>
+      <Blogs/>
     </div>
   )
 }
